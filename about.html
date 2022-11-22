@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>About Page</title>
+
+
+    <link rel='stylesheet'
+          href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.3/css/bootstrap.css'>
+
+    <style>
+        h2 {
+            text-align: center;
+            margin: 20px;
+        }
+
+        pre {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body translate="no">
+<!-- Starting of ajax contact form -->
+<div class="container">
+    <h2>New Email</h2>
+</div>
+<form class="contact__form container" method="POST" action="/send-email">
+    <!-- Starting of successful form message -->
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-success contact__msg" style="display: none" role="alert">
+                Your message was sent successfully.
+            </div>
+        </div>
+    </div>
+    <!-- Ending of successful form message -->
+
+    <!-- Element of the ajax contact form -->
+    <div class="row">
+
+        <div class="col-md-6 form-group">
+            <input name="from" type="email" class="form-control" placeholder="Sender Email" required>
+        </div>
+        <div class="col-md-6 form-group">
+            <input name="to" type="email" class="form-control" placeholder="Receiver Email" required>
+        </div>
+        <div class="col-md-12 form-group">
+            <input name="subject" type="text" class="form-control" placeholder="Subject" required>
+        </div>
+        <div class="col-12 form-group">
+            <textarea name="message" class="form-control" rows="3" placeholder="Message" required></textarea>
+        </div>
+        <div class="col-12">
+            <input name="submit" type="submit" class="btn btn-success" value="Send Message">
+        </div>
+    </div>
+</form>
+<!-- Ending of ajax contact form -->
+<center>
+    <a href="/">Back To Home</a>
+    <button onclick="openTab()">Login</button>
+</center>
+
+<script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+<script id="rendered-js">
+    (function ($) {
+        'use strict';
+        var form = $('.contact__form'),
+            message = $('.contact__msg'),
+            form_data;
+
+        // Success function
+        function done_func(response) {
+            message.fadeIn().removeClass('alert-danger').addClass('alert-success');
+            message.text(response);
+            setTimeout(function () {
+                message.fadeOut();
+            }, 2000);
+            form.find('input:not([type="submit"]), textarea').val('');
+        }
+
+        // fail function
+        function fail_func(data) {
+            message.fadeIn().removeClass('alert-success').addClass('alert-success');
+            message.text(data.responseText);
+            setTimeout(function () {
+                message.fadeOut();
+            }, 2000);
+        }
+
+        form.submit(function (e) {
+            let j = convertFormDataAsJson($(this).serialize())
+            console.log(j)
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data:j
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).done(done_func).fail(fail_func);
+        });
+
+    })(jQuery);
+
+
+    function convertFormDataAsJson (formData)
+    {
+        formData = formData.replaceAll("=",":'").replaceAll("&","',").replaceAll("%","@")
+        formData="{ "+formData+"'}"
+        return formData;
+    }
+
+</script>
+
+
+</body>
+
+</html>
+
